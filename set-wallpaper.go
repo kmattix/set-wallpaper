@@ -4,14 +4,17 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 
 	"github.com/gabriel-vasile/mimetype"
 )
 
 func main() {
+	const cfgFolder = "wallpaper"
 	args := sanitizeArgLength(1, 1)
 	sanitizeFile(args[0], "image/jpeg", "image/png")
-	prepareConfigFolder("wallpaper")
+	prepareConfigFolder(cfgFolder)
+	replaceFile(args[0], cfgFolder, "wallpaper")
 }
 
 // Verify that the program execution arguments are not less than min, and not greater than max.
@@ -47,4 +50,18 @@ func sanitizeFile(path string, fileMimes ...string) {
 		}
 	}
 	log.Fatalf("%s is a non-valid file type: %s", path, mt.String())
+}
+
+// Overwites with the specified file at the config folder with the specified file name
+func replaceFile(newWallpaperPath, folderName, fileName string) {
+	ucd, err := os.UserConfigDir()
+	if err != nil {
+		log.Fatal(err)
+	}
+	path := fmt.Sprintf("%s/%s/%s", ucd, folderName, fileName)
+	cp := exec.Command("cp", newWallpaperPath, path)
+	err = cp.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
 }

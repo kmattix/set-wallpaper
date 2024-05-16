@@ -7,6 +7,7 @@
 *.dll
 *.so
 *.dylib
+set-wallpaper
 
 # Test binary, built with `go test -c`
 *.test
